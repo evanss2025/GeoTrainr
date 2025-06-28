@@ -8,6 +8,7 @@ export default function Home() {
   const [skill, setSkill] = useState("Bollards");
   const [id, setID] = useState(0);
   const [weaknesses, setWeaknesses] = useState<{ id: any; country: string; skill: string }[]>([]);
+  const [loading, setLoading] = useState(false);
 
   function handleSubmit(e: any) {
     e.preventDefault();
@@ -28,6 +29,22 @@ export default function Home() {
         a.id !== id
       ))
     );
+  }
+
+  const handleCreation = async () => {
+    setLoading(true);
+
+    console.log(weaknesses);
+    
+    const response = await fetch("http://localhost:8080/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userWeaknesses: weaknesses })
+    });
+
+    setLoading(false);
   }
 
   return (
@@ -71,7 +88,7 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-col justify-center items-center w-full">
-          <button className="rounded-full shadow-lg p-3 w-1/2 text-white font-bold bg-linear-to-t from-lime-600 to-lime-300 m-6 text-xl hover:from-lime-700 transition duration-200">Create Map!</button>
+          <button onClick={handleCreation} className="rounded-full shadow-lg p-3 w-1/2 text-white font-bold bg-linear-to-t from-lime-600 to-lime-300 m-6 text-xl hover:from-lime-700 transition duration-200">{loading ? "Creating Map..." : "Create Map!"}</button>
           <h3 className="text-white">Map creation may take a few minutes</h3>
         </div>
       </div>
