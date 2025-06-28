@@ -35,7 +35,7 @@ export default function Home() {
     setLoading(true);
 
     console.log(weaknesses);
-    
+
     const response = await fetch("http://localhost:8080/", {
       method: "POST",
       headers: {
@@ -89,7 +89,17 @@ export default function Home() {
         </div>
         <div className="flex flex-col justify-center items-center w-full">
           <button onClick={handleCreation} className="rounded-full shadow-lg p-3 w-1/2 text-white font-bold bg-linear-to-t from-lime-600 to-lime-300 m-6 text-xl hover:from-lime-700 transition duration-200">{loading ? "Creating Map..." : "Create Map!"}</button>
-          <h3 className="text-white">Map creation may take a few minutes</h3>
+          <h3 className="text-red-400">Map creation may take a few minutes</h3>
+        </div>
+        <div id="faq" className='mt-10 text-white flex flex-col justify-center items-center text-xl'>
+          <details className='m-4 flex flex-col text-center items-center'>
+            <summary>How do I upload a GeoTrainr map to Geoguessr?</summary>
+            <p>content</p>
+          </details>
+          <details className='m-4 flex flex-col text-center items-center'>
+              <summary>How does GeoTrainr work?</summary>
+              <p>content</p>
+          </details>
         </div>
       </div>
     </div>
