@@ -12,6 +12,15 @@ export default function Home() {
   const [download, setDownload] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  useEffect(() => {
+    console.log("useEffect");
+    if (weaknesses.length != 0) {
+      setSubmitted(true);
+    } else {
+      setSubmitted(false);
+    }
+  }, [weaknesses])
+
   function handleSubmit(e: any) {
     e.preventDefault();
     console.log(country, skill);
@@ -34,32 +43,35 @@ export default function Home() {
   }
 
   const handleCreation = async () => {
-    setDownload(false)
-    setLoading(true);
+    const button = document.getElementById('create-button');
 
-    console.log(weaknesses);
+    if (submitted) {
+      setDownload(false)
+      setLoading(true);
 
-    const response = await fetch("http://localhost:8080/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userWeaknesses: weaknesses })
-    });
+      console.log(weaknesses);
 
-    setLoading(false);
-    setDownload(true);
+      const response = await fetch("http://localhost:8080/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userWeaknesses: weaknesses })
+      });
 
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = 'GeoTrainr-Map.json';
-    a.click();
-    window.URL.revokeObjectURL(url);
+      setLoading(false);
+      setDownload(true);
 
-    setDownload(false);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = 'GeoTrainr-Map.json';
+      a.click();
+      window.URL.revokeObjectURL(url);
 
+      setDownload(false);
+    }
   }
 
   return (
@@ -123,7 +135,7 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-col justify-center items-center w-full">
-          <button onClick={handleCreation} className="rounded-full shadow-lg p-3 w-1/3 text-white font-bold bg-linear-to-t from-lime-600 to-lime-300 m-6 text-xl hover:from-lime-700 transition duration-200">{loading ? "Creating Map..." : download ? "Downloading..." : "Create Map!"}</button>
+          <button id="create-button" onClick={handleCreation} className="rounded-full shadow-lg p-3 w-1/3 text-white font-bold bg-linear-to-t from-lime-600 to-lime-300 m-6 text-xl hover:from-lime-700 transition duration-200">{loading ? "Creating Map..." : download ? "Downloading..." : submitted ? "Create Map!" : "Please select a country + skill"}</button>
           <h3 className="text-red-400 mb-4 text-xl font-bold">PLEASE ALLOW FOR SOME ERROR, THIS IS IN BETA</h3>
           <h3 className="text-red-400 mb-4 text-sm">Map creation may take up to 4 minutes per country</h3>
           <h3 className='text-red-400 mb-4 text-sm'>Generated maps will include country selected and surrounding countries to help you practice</h3>
