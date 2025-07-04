@@ -81,7 +81,7 @@ def model(country):
     model = DetectMultiBackend(weights_path, device=device)
     model.eval()
 
-    batch_size = 8
+    batch_size = 1
     img_tensors = []
     
     for i, path in enumerate(image_paths):
