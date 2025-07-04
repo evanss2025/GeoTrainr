@@ -135,8 +135,8 @@ export default function Home() {
         </div>
         <div className="flex flex-col justify-center items-center w-full">
           <button id="create-button" onClick={handleCreation} className="rounded-full shadow-lg p-3 w-1/3 text-white font-bold bg-linear-to-t from-lime-600 to-lime-300 m-6 text-xl hover:from-lime-700 transition duration-200">{loading ? "Creating Map..." : download ? "Downloading..." : submitted ? "Create Map!" : "Please select a country + skill"}</button>
-          <h3 className="text-red-400 mb-4 text-xl font-bold">PLEASE ALLOW FOR SOME ERROR, THIS IS IN BETA</h3>
-          <h3 className="text-red-400 mb-4 text-sm">Map creation may take up to 4 minutes per country</h3>
+          {/* <h3 className="text-red-400 mb-4 text-xl font-bold">PLEASE ALLOW FOR SOME ERROR, THIS IS IN BETA</h3> */}
+          <h3 className="text-red-400 mb-4 text-sm">Map creation takes 500 samples and may take up to 4 minutes to process per country</h3>
           <h3 className='text-red-400 mb-4 text-sm'>Generated maps will include country selected and surrounding countries to help you practice</h3>
           <h3 className='text-red-400 mb-4 text-sm'>Generated maps will not be evenly distributed within the country selected</h3>
 
