@@ -8,7 +8,7 @@ from map import read_csv, model
 from file import create_file
 
 app = Flask(__name__)
-CORS(app, origins=["https://geotrainr.vercel.app/"])
+CORS(app, origins=["https://geotrainr.vercel.app"])
 
 @app.route("/", methods=['POST', 'GET'])
 def submit():
