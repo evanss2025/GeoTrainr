@@ -8,10 +8,13 @@ from map import read_csv, model
 from file import create_file
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://geotrainr.vercel.app"])
 
 @app.route("/", methods=['POST', 'GET'])
 def submit():
+    if request.method == "OPTIONS":
+        return jsonify({'status': 'ok'}), 200  # Respond to preflight
+    
     parsed_data = []
     data = request.get_json()
     weaknesses = data.get('userWeaknesses', [])
