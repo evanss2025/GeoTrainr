@@ -7,7 +7,7 @@ export default function Home() {
   const [country, setCountry] = useState("Austria");
   const [skill, setSkill] = useState("Bollards");
   const [id, setID] = useState(0);
-  const [weaknesses, setWeaknesses] = useState<{ id: any; country: string; skill: string }[]>([]);
+  const [weaknesses, setWeaknesses] = useState<{ id: number; country: string; skill: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [download, setDownload] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -21,9 +21,10 @@ export default function Home() {
     }
   }, [weaknesses])
 
-  function handleSubmit(e: any) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(country, skill);
+    console.log(id);
     setID(prevId => {
       const newId = prevId + 1;
       setWeaknesses([
@@ -34,7 +35,7 @@ export default function Home() {
     });
   }
 
-  function handleDelete(id: any) {
+  function handleDelete(id: number) {
     setWeaknesses(
       weaknesses.filter(a => (
         a.id !== id
@@ -43,8 +44,6 @@ export default function Home() {
   }
 
   const handleCreation = async () => {
-    const button = document.getElementById('create-button');
-
     if (submitted) {
       setDownload(false)
       setLoading(true);
@@ -128,7 +127,7 @@ export default function Home() {
                 {weaknesses.map(weakness => (
                   <li className="flex m-3" key={weakness.id}>
                       <h1 className="bg-stone-300 rounded-full p-3 px-6">{weakness.country}, {weakness.skill}</h1>
-                      <button onClick={e => handleDelete(weakness.id)} className="text-xl m-2">x</button>
+                      <button onClick={() => handleDelete(weakness.id)} className="text-xl m-2">x</button>
                   </li>
                 ))}
               </ul>
@@ -180,7 +179,7 @@ export default function Home() {
           <details className='m-4 flex flex-col text-center items-center w-2/3'>
               <summary>How does GeoTrainr work?</summary>
               <p className='mt-4'>GeoTrainr uses a yolov5 model to go through different images pulled from Mapillary in the selected countries
-                and detects if they have the user's selected weaknesses. After the model cycles through everything, a list of all detections' coordinates
+                and detects if they have the user&apos;s selected weaknesses. After the model cycles through everything, a list of all detections&apos; coordinates
                 is returned. Then, these coordiantes are compiled into a json file that the user can download.
               </p>
           </details>
