@@ -1,6 +1,7 @@
 #creating json file that user downloads
 
-import json
+import json, io
+from io import BytesIO
 
 def create_file(coordinates):
     data = {
@@ -12,5 +13,6 @@ def create_file(coordinates):
         parsed_coords = {"lat": coordinate[1], "lng": coordinate[0]}
         data['customCoordinates'].append(parsed_coords)
 
-    with open('output.json', 'w') as f:
-        json.dump(data, f, indent=4)
+    json_string = json.dumps(data, indent=4)
+
+    return io.BytesIO(json_string.encode('utf-8'))

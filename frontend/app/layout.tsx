@@ -20,6 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <link
+        rel="icon"
+        href="/icon?<generated>"
+        type="image/<generated>"
+        sizes="<generated>"
+      />
       <body
         className={`${albert_sans.className} antialiased`}
       >

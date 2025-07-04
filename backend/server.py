@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os, sys
 
@@ -12,21 +12,28 @@ CORS(app)
 
 @app.route("/", methods=['POST', 'GET'])
 def submit():
-    if request.method == "POST":
-        parsed_data = []
-        data = request.get_json()
-        weaknesses = data.get('userWeaknesses')
+    parsed_data = []
+    data = request.get_json()
+    weaknesses = data.get('userWeaknesses', [])
 
-        print(weaknesses)
+    print(weaknesses)
 
-        for weakness in weaknesses:
-            parsed_data += model(weakness.get('country'))
+    for weakness in weaknesses:
+        parsed_data += model(weakness.get('country'))
 
-        create_file(parsed_data)
+    json_file = create_file(parsed_data)
+    json_file.seek(0)
+
+
+    return send_file(
+        json_file,
+        mimetype='application/json',
+        as_attachment=True,
+        download_name='GeoTrainr-Map.json' 
+    )
         
-    return 'received'
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(host="0.0.0.0", port=8080)
 
