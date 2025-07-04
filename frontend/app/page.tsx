@@ -45,31 +45,35 @@ export default function Home() {
 
   const handleCreation = async () => {
     if (submitted) {
-      setDownload(false)
-      setLoading(true);
+      try {
+        setDownload(false)
+        setLoading(true);
 
-      console.log(weaknesses);
+        console.log(weaknesses);
 
-      const response = await fetch("https://geotrainr.onrender.com/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userWeaknesses: weaknesses })
-      });
+        const response = await fetch("https://geotrainr.onrender.com/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userWeaknesses: weaknesses })
+        });
 
-      setLoading(false);
-      setDownload(true);
+        setLoading(false);
+        setDownload(true);
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = 'GeoTrainr-Map.json';
-      a.click();
-      window.URL.revokeObjectURL(url);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = 'GeoTrainr-Map.json';
+        a.click();
+        window.URL.revokeObjectURL(url);
 
-      setDownload(false);
+        setDownload(false);
+      } catch (err) {
+        setLoading(false);
+      } 
     }
   }
 

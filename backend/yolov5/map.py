@@ -64,7 +64,7 @@ def model(country):
     filtered_map_coords = []
 
     #this part works correctly for now
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    with ThreadPoolExecutor(max_workers=1) as executor:
         results = list(executor.map(get_img, res))
 
     for result in results:
@@ -90,7 +90,7 @@ def model(country):
         except PIL.UnidentifiedImageError:
             print("Skipping invalid image")
             continue
-        img_resized = img.resize((640, 640))
+        img_resized = img.resize((320, 320))
         img_array = np.array(img_resized)
 
         img_tensor = torch.from_numpy(img_array).permute(2, 0, 1).unsqueeze(0).float() / 255.0
