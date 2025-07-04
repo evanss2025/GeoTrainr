@@ -33,7 +33,7 @@ def read_csv(country):
         return 0, 0, 0, 0
 
 ACCESS_TOKEN=os.environ.get('ACCESS_TOKEN')
-LIMIT = 500
+LIMIT = 250
 
 def get_img(item):
     try:
@@ -64,7 +64,7 @@ def model(country):
     filtered_map_coords = []
 
     #this part works correctly for now
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=5) as executor:
         results = list(executor.map(get_img, res))
 
     for result in results:
@@ -81,7 +81,7 @@ def model(country):
     model = DetectMultiBackend(weights_path, device=device)
     model.eval()
 
-    batch_size = 16
+    batch_size = 8
     img_tensors = []
     
     for i, path in enumerate(image_paths):
