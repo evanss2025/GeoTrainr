@@ -11,6 +11,7 @@ from utils.general import non_max_suppression
 from utils.torch_utils import select_device
 from concurrent.futures import ThreadPoolExecutor
 
+
 load_dotenv()  # take environment variables
 
 def read_csv(country):
@@ -33,7 +34,7 @@ def read_csv(country):
         return 0, 0, 0, 0
 
 ACCESS_TOKEN=os.environ.get('ACCESS_TOKEN')
-LIMIT = 250
+LIMIT = 50
 
 def get_img(item):
     try:
@@ -55,6 +56,7 @@ def get_img(item):
 
 
 def model(country):
+
     print("✅ model function running")
     url = f"https://graph.mapillary.com/images?fields=id,thumb_2048_url,geometry&bbox={read_csv(country)}&limit={LIMIT}&access_token={ACCESS_TOKEN}"
     res = requests.get(url).json().get("data", [])
@@ -75,6 +77,7 @@ def model(country):
         map_coords.append(coords)
 
         print(f"✅ downloaded {len(image_paths)} images")
+
 
     weights_path = 'yolov5/best.pt'
     device = select_device('') 
@@ -113,4 +116,6 @@ def model(country):
                 print("NOTHING DETECTED")
 
     print(f"Total detections: {len(filtered_map_coords)} / {len(map_coords)}")
+
+
     return filtered_map_coords
