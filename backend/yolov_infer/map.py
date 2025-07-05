@@ -82,7 +82,7 @@ def model(country):
         print(f"✅ downloaded {len(image_paths)} images")
 
 
-    weights_path = 'yolov_infer/weights/best.pt'
+    weights_path = 'yolov5/runs/train/bollard_detector14/weights/best.pt'
     device = select_device('') 
     model = DetectMultiBackend(weights_path, device=device)
     model.eval()

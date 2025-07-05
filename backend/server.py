@@ -4,7 +4,7 @@ import os, sys
 
 sys.path.append("yolov5")
 
-from map import read_csv, run_inference
+from map import read_csv, model
 from file import create_file
 
 app = Flask(__name__)
@@ -22,7 +22,7 @@ def submit():
     print(weaknesses)
 
     for weakness in weaknesses:
-        parsed_data += run_inference(weakness.get('country'))
+        parsed_data += model(weakness.get('country'))
 
     json_file = create_file(parsed_data)
     json_file.seek(0)
