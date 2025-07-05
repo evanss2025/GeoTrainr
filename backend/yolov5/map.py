@@ -17,6 +17,11 @@ load_dotenv()  # take environment variables
 if sys.platform != "win32":
     pathlib.WindowsPath = pathlib.PosixPath
 
+weights_path = 'yolov5/runs/train/bollard_detector14/weights/best.pt'
+device = select_device('')
+model_backend = DetectMultiBackend(weights_path, device=device)
+model_backend.eval()
+
 def read_csv(country):
     with open('country-boundingboxes.csv', newline='') as csvfile:
         reader = csv.reader(csvfile)
@@ -58,7 +63,7 @@ def get_img(item):
         return None
 
 
-def model(country):
+def run_inference(country):
 
     print("✅ model function running")
     url = f"https://graph.mapillary.com/images?fields=id,thumb_2048_url,geometry&bbox={read_csv(country)}&limit={LIMIT}&access_token={ACCESS_TOKEN}"
@@ -81,12 +86,6 @@ def model(country):
 
         print(f"✅ downloaded {len(image_paths)} images")
 
-
-    weights_path = 'yolov5/runs/train/bollard_detector14/weights/best.pt'
-    device = select_device('') 
-    model = DetectMultiBackend(weights_path, device=device)
-    model.eval()
-
     batch_size = 1
     img_tensors = []
     
@@ -108,7 +107,7 @@ def model(country):
 
         print(f"batch {i // batch_size + 1} with size {batch.shape[0]}")
 
-        pred = model(batch)
+        pred = model_backend(batch)
         detections = non_max_suppression(pred)
 
         for j, det in enumerate(detections):
