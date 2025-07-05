@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os, sys
 
-from backend.map import read_csv, run_inference
+from map import read_csv, run_inference
 from file import create_file
 
 app = Flask(__name__)
