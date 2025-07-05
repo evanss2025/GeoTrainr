@@ -10,3 +10,4 @@ pillow
 opencv-python
 requests
 pandas
+gradio-client
