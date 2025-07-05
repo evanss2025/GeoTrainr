@@ -8,6 +8,9 @@ import base64
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+from dotenv import load_dotenv
+load_dotenv()
+
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
 LIMIT = 50
 
