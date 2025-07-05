@@ -5,14 +5,17 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 import torch
-from pathlib import Path
 from models.common import DetectMultiBackend
 from utils.general import non_max_suppression
 from utils.torch_utils import select_device
 from concurrent.futures import ThreadPoolExecutor
+import sys, pathlib
 
 
 load_dotenv()  # take environment variables
+
+if sys.platform != "win32":
+    pathlib.WindowsPath = pathlib.PosixPath
 
 def read_csv(country):
     with open('country-boundingboxes.csv', newline='') as csvfile:
