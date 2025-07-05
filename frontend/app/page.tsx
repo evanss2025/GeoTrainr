@@ -51,7 +51,7 @@ export default function Home() {
 
         console.log(weaknesses);
 
-        const response = await fetch("https://geotrainr.onrender.com/", {
+        const response = await fetch("http://localhost:8080/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

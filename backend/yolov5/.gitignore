@@ -1,3 +1,51 @@
+# Ignore everything in runs/
+runs/*
+# But keep only weights/best.pt (needed for inference)
+!runs/**/
+!runs/**/weights/
+!runs/**/weights/best.pt
+
+# Ignore training scripts and notebooks
+train.py
+val.py
+detect.py
+export.py
+benchmarks.py
+tutorial.ipynb
+
+# Ignore training data, classification, segmentation
+data/
+classify/
+segment/
+models/hub/
+models/segment/
+models/*.yaml
+
+# Ignore unused utils
+utils/segment/
+utils/aws/
+utils/docker/
+utils/flask_rest_api/
+utils/google_app_engine/
+utils/loggers/
+
+# Ignore GitHub/devops/CI files
+.github/
+.dockerignore
+.gitattributes
+.gitignore
+CITATION.cff
+CONTRIBUTING.md
+README.zh-CN.md
+hubconf.py
+
+# Ignore bytecode and cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.so
+
+
 # Repo-specific GitIgnore ----------------------------------------------------------------------------------------------
 *.jpg
 *.jpeg
@@ -255,3 +303,4 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
