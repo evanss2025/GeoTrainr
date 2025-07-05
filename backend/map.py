@@ -1,6 +1,7 @@
 import os
 import requests
 import csv
+import base64
 
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
 LIMIT = 50
@@ -41,20 +42,26 @@ def run_inference(country):
             print("Error downloading image:", e)
             continue
         
-        # Send image bytes to HF Space inference API
-        files = {"image": ("image.jpg", img_bytes, "image/jpeg")}
+        # Convert image bytes to base64 string for HF Space API
+        img_b64 = base64.b64encode(img_bytes).decode('utf-8')
+        payload = {
+            "data": [f"data:image/jpeg;base64,{img_b64}"]
+        }
+
+        # Send image to HF Space inference API
         try:
-            response = requests.post(HF_SPACE_INFERENCE_URL, files=files)
+            response = requests.post(HF_SPACE_INFERENCE_URL, json=payload)
             response.raise_for_status()
             result = response.json()
         except Exception as e:
             print("Error calling HF Space inference:", e)
             continue
         
-        # Check if any detections found (adjust based on your HF output format)
-        # Assuming result is a JSON string of pandas output or similar
-        detections = result.get('data', [{}])[0].get('value', [])
-        if detections:  # if any detections exist, keep coords
+        # Extract detections from the HF Space output
+        # Adjust this parsing if your HF model output differs
+        detections = result.get('data', [{}])[0]  # usually a dict or list here
+        
+        if detections:
             filtered_map_coords.append(coords)
             print("✅ Detection found, coords added")
         else:
