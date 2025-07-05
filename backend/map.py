@@ -18,11 +18,11 @@ def read_csv(country):
                 longmax = row[3]
                 latmax = row[4]
                 return f"{longmin},{latmin},{longmax},{latmax}"
-        return 0, 0, 0, 0
+        return "0,0,0,0"
 
 def run_inference(country):
     print("✅ Running inference via HF Space API")
-    
+
     url = f"https://graph.mapillary.com/images?fields=id,thumb_2048_url,geometry&bbox={read_csv(country)}&limit={LIMIT}&access_token={ACCESS_TOKEN}"
     res = requests.get(url).json().get("data", [])
 
@@ -32,40 +32,46 @@ def run_inference(country):
         img_url = item.get('thumb_2048_url')
         if not img_url:
             continue
-        
+
         coords = item['geometry']['coordinates']
-        
+
         # Download image bytes
         try:
             img_bytes = requests.get(img_url).content
         except Exception as e:
-            print("Error downloading image:", e)
+            print("❌ Error downloading image:", e)
             continue
-        
-        # Convert image bytes to base64 string for HF Space API
+
+        # Encode image in base64
         img_b64 = base64.b64encode(img_bytes).decode('utf-8')
+        data_url = f"data:image/jpeg;base64,{img_b64}"
+
+        # Correct payload format for HF Space
         payload = {
-            "data": [f"data:image/jpeg;base64,{img_b64}"]
+            "data": [{
+                "url": data_url,
+                "mime_type": "image/jpeg",
+                "orig_name": "image.jpg",
+                "is_stream": False,
+                "meta": {}
+            }]
         }
 
-        # Send image to HF Space inference API
         try:
             response = requests.post(HF_SPACE_INFERENCE_URL, json=payload)
             response.raise_for_status()
             result = response.json()
+            print("🧪 HF Response:", result)
         except Exception as e:
-            print("Error calling HF Space inference:", e)
+            print("❌ Error calling HF Space inference:", e)
             continue
-        
-        # Extract detections from the HF Space output
-        # Adjust this parsing if your HF model output differs
-        detections = result.get('data', [{}])[0]  # usually a dict or list here
-        
-        if detections:
+
+        output = result.get("data", [])[0]
+        if output:
             filtered_map_coords.append(coords)
             print("✅ Detection found, coords added")
         else:
-            print("No detections")
+            print("⚠️ No detections")
 
-    print(f"Total detections: {len(filtered_map_coords)} / {len(res)}")
+    print(f"🔍 Total detections: {len(filtered_map_coords)} / {len(res)}")
     return filtered_map_coords
