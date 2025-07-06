@@ -94,7 +94,6 @@ export default function Home() {
                 <option value="France">Austria</option>
                 <option value="Germany">Belgium</option>
                 <option value="United Kingdom">Bulgaria</option>
-                <option value="Czechia">Czechia</option>
                 <option value="Denmark">Denmark</option>
                 <option value="Estonia">Estonia</option>
                 <option value="Finland">Finland</option>
