@@ -35,7 +35,7 @@ def fetch_mapillary_images(bbox):
         f"&bbox={bbox}&limit={LIMIT}&access_token={ACCESS_TOKEN}"
     )
     try:
-        res = requests.get(url, timeout=10)
+        res = requests.get(url, timeout=20)
         res.raise_for_status()
         data = res.json().get("data", [])
         logger.debug(f"🧭 Got {len(data)} images from Mapillary")
@@ -54,7 +54,7 @@ def process_image(item):
 
         coords = item['geometry']['coordinates']
         try:
-            img_res = requests.get(img_url, timeout=10)
+            img_res = requests.get(img_url, timeout=20)
             img_res.raise_for_status()
             img_bytes = img_res.content
         except Exception as e:
@@ -95,7 +95,7 @@ def run_inference(country):
         futures = [executor.submit(process_image, item) for item in image_data]
         for future in as_completed(futures):
             try:
-                result = future.result(timeout=30)  # Timeout per image processing
+                result = future.result(timeout=40)  # Timeout per image processing
                 if result:
                     filtered_map_coords.append(result)
             except TimeoutError:
