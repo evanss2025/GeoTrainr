@@ -2,23 +2,25 @@ import os
 import requests
 import csv
 import logging
+import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from gradio_client import Client, handle_file
 from dotenv import load_dotenv
 
+# Load env variables and logging
+load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-load_dotenv() 
-
-ACCESS_TOKEN=os.environ.get('ACCESS_TOKEN')
-LIMIT = 50
+# Config
+ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
+LIMIT = 500
 MAX_WORKERS = 8
 HF_CLIENT = Client("evanss2025/geotrainr-model")
 HF_API_NAME = "/predict"
 
 def read_csv(country):
-    logger.info(f"bounding box for country: {country}")
+    logger.info(f"reading bounding box for country: {country}")
     with open('country-boundingboxes.csv', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
@@ -27,6 +29,10 @@ def read_csv(country):
     return "0,0,0,0"
 
 def fetch_mapillary_images(bbox):
+    if not ACCESS_TOKEN:
+        logger.error("missing Mapillary ACCESS_TOKEN.")
+        return []
+
     url = (
         f"https://graph.mapillary.com/images"
         f"?fields=id,thumb_2048_url,geometry"
@@ -36,26 +42,31 @@ def fetch_mapillary_images(bbox):
         res = requests.get(url)
         res.raise_for_status()
         data = res.json().get("data", [])
-        logger.debug(f"got {len(data)} images from mapillary")
+        logger.debug(f"🧭 Got {len(data)} images from Mapillary")
         return data
     except Exception as e:
-        logger.error(f"failed to fetch images from mapillary: {e}")
+        logger.error(f"❌ Failed to fetch images from Mapillary: {e}")
         return []
 
 def process_image(item):
     try:
         img_url = item.get('thumb_2048_url')
         if not img_url:
-            logger.warning("no thumbnail url found. Skipping.")
+            logger.warning("⚠️ No thumbnail URL found. Skipping.")
             return None
 
         coords = item['geometry']['coordinates']
         img_bytes = requests.get(img_url).content
 
-        result = HF_CLIENT.predict(
-            image=handle_file(img_bytes),
-            api_name=HF_API_NAME
-        )
+        # Write image to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
+            temp_file.write(img_bytes)
+            temp_file.flush()
+
+            result = HF_CLIENT.predict(
+                image=handle_file(temp_file.name),
+                api_name=HF_API_NAME
+            )
 
         if result:
             logger.info("✅ Detection found")
@@ -68,7 +79,7 @@ def process_image(item):
         return None
 
 def run_inference(country):
-    logger.info(f"✅ Running inference for country: {country}")
+    logger.info(f"running inference for country: {country}")
     bbox = read_csv(country)
     image_data = fetch_mapillary_images(bbox)
 

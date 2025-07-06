@@ -73,6 +73,7 @@ export default function Home() {
         setDownload(false);
       } catch (err) {
         setLoading(false);
+        console.log(err);
       } 
     }
   }
