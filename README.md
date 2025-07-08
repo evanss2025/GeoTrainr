@@ -1,4 +1,5 @@
 # GeoTrainr
+## [Demo for after JSON download](https://drive.google.com/file/d/1DhipMxlQnbNMTDXJHJsLAf1lE9VfK_Z5/view?usp=sharing)
 ## 🌟 About the Project
 GeoTrainr is a specialized map creator for the game, GeoGuessr. GeoTrainr aims to help players improve their weaknesses in the game. Users input which countries and skills they are weak at, and then GeoTrainr will curate a map
 that only has locations with the specific skill from the specific country. The map will also have some surrounding countries as well to help improve practice and distinguishing. Right now, GeoTrainr only focuses on bollards, but I hope to add more meta in the future.
