@@ -6,7 +6,7 @@ from map import read_csv, run_inference
 from file import create_file
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://geotrainr.vercel.app"])
 
 @app.route("/", methods=['POST', 'GET', 'OPTIONS'])
 def submit():
