@@ -34,7 +34,7 @@ export default function Home() {
     const interval = setInterval(async () => {
       try {
         console.log("trying polling");
-        const res = await fetch("http://localhost:8080/progress");
+        const res = await fetch("https://geotrainr.onrender.com/progress");
         const data = await res.json();
         console.log("Progress:", data);
 
@@ -87,7 +87,7 @@ export default function Home() {
 
         console.log(weaknesses);
 
-        const response = await fetch("http://localhost:8080/", {
+        const response = await fetch("https://geotrainr.onrender.com/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
