@@ -11,6 +11,9 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [download, setDownload] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [phase, setPhase] = useState("Idle");
+  const [polling, setPolling] = useState(false);
 
   useEffect(() => {
     console.log("useEffect");
@@ -20,6 +23,38 @@ export default function Home() {
       setSubmitted(false);
     }
   }, [weaknesses])
+
+  useEffect(() => {
+    if (!polling) {
+      console.log("not polling");
+      return;
+    }
+    console.log("polling");
+
+    const interval = setInterval(async () => {
+      try {
+        console.log("trying polling");
+        const res = await fetch("http://localhost:8080/progress");
+        const data = await res.json();
+        console.log("Progress:", data);
+
+        setProgress(data.percent); // <- directly from response
+        setPhase(data.phase);
+
+        // if (data.phase === "idle") {
+        //   clearInterval(interval);
+        //   setPolling(false);
+        // }
+      } catch (err) {
+        console.error("Polling failed", err);
+        clearInterval(interval);
+        setPolling(false);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [polling]);
+
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,10 +83,11 @@ export default function Home() {
       try {
         setDownload(false)
         setLoading(true);
+        setPolling(true);
 
         console.log(weaknesses);
 
-        const response = await fetch("https://geotrainr.onrender.com/", {
+        const response = await fetch("http://localhost:8080/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -71,8 +107,10 @@ export default function Home() {
         window.URL.revokeObjectURL(url);
 
         setDownload(false);
+        setPolling(false);
       } catch (err) {
         setLoading(false);
+        setPolling(false);
         console.log(err);
       } 
     }
@@ -139,6 +177,14 @@ export default function Home() {
         </div>
         <div className="flex flex-col justify-center items-center w-full">
           <button id="create-button" onClick={handleCreation} className="rounded-full shadow-lg p-3 w-1/3 text-white font-bold bg-linear-to-t from-lime-600 to-lime-300 m-6 text-xl hover:from-lime-700 transition duration-200">{loading ? "Creating Map..." : download ? "Downloading..." : submitted ? "Create Map!" : "Please select a country + skill"}</button>
+          <div id="progress-bar" className="w-full max-w-lg bg-gray-200 rounded-full h-4 m-3">
+            <div
+              id="progressBar"
+              className="bg-lime-600 h-4 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <p className="m-1 text-sm text-white">{phase} — {progress}%</p>
           {/* <h3 className="text-red-400 mb-4 text-xl font-bold">PLEASE ALLOW FOR SOME ERROR, THIS IS IN BETA</h3> */}
           <h3 className="text-red-400 mb-4 text-sm">Map creation takes 500 samples and may take up to 10 minutes to process per country</h3>
           <h3 className='text-red-400 mb-4 text-sm'>Generated maps will include country selected and surrounding countries to help you practice</h3>
