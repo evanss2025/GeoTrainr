@@ -226,7 +226,7 @@ def run_inference(country):
     progress_status["total_images"] = 0
     
     all_image_data = []
-    MAX_TOTAL_IMAGES = 500
+    MAX_TOTAL_IMAGES = 50
     
         # Fetch images from all bbox segments
     for i, bbox_segment in enumerate(bbox_list):
